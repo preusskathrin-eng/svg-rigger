@@ -1,4 +1,3 @@
 shapely==2.1.2
 svgelements==1.9.6
 vtracer==1.0.0a4
-

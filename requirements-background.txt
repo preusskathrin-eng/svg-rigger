@@ -2,4 +2,3 @@
 Pillow==12.3.0
 onnxruntime==1.29.0
 rembg[cpu]==2.0.83
-

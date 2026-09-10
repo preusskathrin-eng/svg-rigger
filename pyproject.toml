@@ -33,4 +33,3 @@ svg-rigger-inspect = "svg_rigger.inspect:main"
 
 [tool.setuptools.packages.find]
 include = ["svg_rigger*"]
-

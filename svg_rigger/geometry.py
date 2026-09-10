@@ -26,7 +26,6 @@ def parse_style(text):
             result[key.strip()] = value.strip()
     return result
 
-
 def repair(geometry):
     if geometry is None or geometry.is_empty:
         return None
@@ -206,4 +205,3 @@ def svg_canvas_attributes(root):
         if width and height:
             result["viewBox"] = f"0 0 {width.group()} {height.group()}"
     return result
-

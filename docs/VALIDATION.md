@@ -1,6 +1,6 @@
 # Validierungsprotokoll
 
-Stand: 10. September 2026  
+Stand: 10. September 2026
 Plattform: Windows, Python 3.11
 
 ## Geprüfte Bereiche
