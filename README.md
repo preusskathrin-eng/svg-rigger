@@ -19,7 +19,7 @@ sind hier kein Bestandteil des Kernablaufs.
 Der technische Grundablauf ist implementiert und mit einem kleinen
 Zwei-Teile-Beispiel sowie der realen Rocky-Datei getestet. Das Repository
 enthält Rockys Komplettfigur, die drei Inkscape-Clip-Pfade für Körper, Kopf und
-linken Arm, die Schnittkonfiguration und eine lauffähige Arm-Animation. Die
+linken Arm, die Schnittkonfiguration und lauffähige Kopf- und Arm-Animationen. Die
 Bewegungsparameter sind ein technisch geprüfter Ausgangspunkt, noch keine
 abschließende gestalterische Entscheidung.
 
@@ -204,7 +204,10 @@ svg-rigger-inspect work/parts/*.svg work/rocky_animated.svg
 Unterstützt werden deklarative SVG-Transformationen vom Typ `rotate`,
 `translate` und `scale`. `parent` kann eine andere Part-ID referenzieren; dann
 erbt das Kind deren Transformation. Die Pivots müssen derzeit manuell im
-ViewBox-Koordinatensystem bestimmt werden.
+ViewBox-Koordinatensystem bestimmt werden. Optional erweitert
+`viewbox_padding` die ViewBox gleichmäßig auf allen vier Seiten, ohne die
+Koordinaten oder Geometrie der Teile zu verändern. Das schafft Bewegungsraum
+für Teile, die im Ausgangsbild dicht am Rand liegen.
 
 ## Minimales reproduzierbares Beispiel
 
@@ -241,13 +244,15 @@ subtrahiert. Der Arm liegt entsprechend der gelieferten Inkscape-Z-Order hinter
 dem Körper. Seine Ausgangsrotation und sein Drehpunkt wurden aus der
 Teilegruppe übernommen.
 
-<img src="examples/rocky/output/rocky_animated_preview.png" width="420" alt="Aus Masken geschnittener Rocky mit separat animierbarem linken Arm">
+<img src="examples/rocky/output/rocky_animated_preview.png" width="420" alt="Aus Masken geschnittener Rocky mit separat animierbarem Kopf und linkem Arm">
 
 Das versionierte [animierte SVG](examples/rocky/output/rocky_animated.svg)
-enthält 372 Pfade, 51 Füllwerte, drei Teilegruppen und eine SMIL-Animation.
-Zwei in Edge gerenderte Zeitpunkte unterschieden sich ausschließlich im
-Arm-Bereich. Eine zusätzliche Kopfrotation wurde nicht aktiviert, weil bereits
-±1,5° die oberen Haarspitzen außerhalb der vorhandenen ViewBox bewegt.
+enthält 372 Pfade, 51 Füllwerte, drei Teilegruppen und zwei SMIL-Animationen.
+Der linke Arm rotiert zwischen −5° und 8°, der Kopf langsamer zwischen −1,5°
+und 1,5°. Für die Kopfbewegung wurde die ViewBox mit 20 Einheiten Rand von
+`0 0 1254 1254` auf `-20 -20 1294 1294` erweitert. Zwei in Edge gerenderte
+Extrempositionen zeigen weder abgeschnittene Haarspitzen noch abgeschnittene
+Armflächen.
 
 ## Technische Grenzen
 

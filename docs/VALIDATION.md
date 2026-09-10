@@ -134,22 +134,25 @@ Schnittergebnisse mit `sample_step=0.5`, `precision=2`:
 | Kopf | 458.422 | 204 | 51 | 142 | 62 |
 | linker Arm | 179.699 | 39 | 21 | 18 | 21 |
 
-Das Ergebnis `examples/rocky/output/rocky_animated.svg` hat 768.967 Bytes,
-372 Pfade, 51 Füllwerte, drei Gruppen und eine Armrotation. Der Kopf wurde nach
-einem Render-Versuch absichtlich statisch gelassen: Eine Bewegung von ±1,5°
-schnitt obere Haarspitzen an der unveränderten ViewBox ab. Der Arm wurde hinter
-dem Körper einsortiert, entsprechend der gelieferten Inkscape-Z-Order.
+Das Ergebnis `examples/rocky/output/rocky_animated.svg` hat 769.260 Bytes,
+372 Pfade, 51 Füllwerte, drei Gruppen sowie je eine Rotation für Kopf und Arm.
+Die optionale Rig-Einstellung `viewbox_padding: 20` erweitert die ViewBox von
+`0 0 1254 1254` auf `-20 -20 1294 1294`, ohne Teilekoordinaten zu verändern.
+Damit bleibt die Kopfbewegung von ±1,5° einschließlich der oberen Haarspitzen
+sichtbar. Der Arm wurde hinter dem Körper einsortiert, entsprechend der
+gelieferten Inkscape-Z-Order.
 
 SHA-256:
 
 - animiertes SVG:
-  `07F3E3564A6FCB78B1C19A72BBF2FB53B263BE14369783A7E325971C6C7397A1`
+  `E8B1977726427124A65C00AE551957D5429BC3A4F68CA2D59BE7454B95CF520E`
 - Vorschau-PNG:
-  `EB5F30EE4B9CEA8CE048D202BFCAE38A8770C68EDEE99B395C535E64D88DEA56`
+  `9B18599D1C3040B1951FB47CDF2908B5895FA362778AC2DDBF0A78E8BA8F094D`
 
-Zwei Headless-Edge-Frames bei 100 ms und 900 ms unterschieden sich in 43.794
-Pixeln. Die Differenz-Bounding-Box `(789, 294)–(1152, 736)` umfasst nur den
-linken Arm; Kopf und Körper blieben unverändert.
+Zwei Headless-Edge-Frames bei 100 ms und 1.600 ms unterschieden sich in 127.308
+Pixeln. Die Differenz-Bounding-Box `(279, 24)–(1091, 744)` umfasst die erwarteten
+Kopf- und Armbereiche. Beide gerenderten Positionen bleiben vollständig in der
+erweiterten ViewBox sichtbar; der Körper bleibt statisch.
 
 ## Noch nicht validiert
 

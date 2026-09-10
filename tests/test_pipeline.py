@@ -57,6 +57,7 @@ class PipelineTests(unittest.TestCase):
             cut_parts(EXAMPLE / "cut.json", parts)
             config = {
                 "title": "Test rig",
+                "viewbox_padding": 5,
                 "parts": [
                     {"id": "body", "file": str(parts / "body.svg")},
                     {
@@ -78,6 +79,8 @@ class PipelineTests(unittest.TestCase):
 
             self.assertEqual(report["parts"], 2)
             self.assertEqual(report["animations"], 1)
+            self.assertEqual(report["viewBox"], "-5 -5 110 110")
+            self.assertEqual(ET.parse(output).getroot().get("viewBox"), "-5 -5 110 110")
             groups = {item.get("id") for item in elements(output, "g")}
             self.assertEqual(groups, {"body", "arm"})
             animations = elements(output, "animateTransform")

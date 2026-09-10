@@ -18,6 +18,36 @@ def resolve(base, value):
     return path if path.is_absolute() else (base / path).resolve()
 
 
+def padded_canvas(canvas, padding):
+    """Expand the viewBox without changing the coordinate system of rig parts."""
+    if padding is None:
+        return canvas
+    try:
+        padding = float(padding)
+    except (TypeError, ValueError) as exc:
+        raise ValueError("viewbox_padding must be a non-negative number") from exc
+    if padding < 0:
+        raise ValueError("viewbox_padding must be a non-negative number")
+    values = str(canvas.get("viewBox", "")).replace(",", " ").split()
+    if len(values) != 4:
+        raise ValueError("viewbox_padding requires a four-number SVG viewBox")
+    try:
+        x, y, width, height = map(float, values)
+    except ValueError as exc:
+        raise ValueError("viewbox_padding requires a numeric SVG viewBox") from exc
+    expanded = dict(canvas)
+    expanded["viewBox"] = " ".join(
+        f"{value:g}"
+        for value in (
+            x - padding,
+            y - padding,
+            width + 2 * padding,
+            height + 2 * padding,
+        )
+    )
+    return expanded
+
+
 def animation_attributes(animation):
     kind = animation.get("type")
     values = animation.get("values")
@@ -129,6 +159,7 @@ def build_rig(config_path, output_path):
         loaded.append((part, part_path, part_root))
 
     ET.register_namespace("", SVG_NS)
+    canvas = padded_canvas(canvas, config.get("viewbox_padding"))
     root = ET.Element(f"{{{SVG_NS}}}svg", canvas)
     if config.get("title"):
         ET.SubElement(root, f"{{{SVG_NS}}}title").text = str(config["title"])
@@ -165,6 +196,7 @@ def build_rig(config_path, output_path):
         "parts": len(parts),
         "animations": sum(bool(item.get("animation")) for item in parts),
         "bytes": output_path.stat().st_size,
+        "viewBox": canvas.get("viewBox"),
     }
 
 

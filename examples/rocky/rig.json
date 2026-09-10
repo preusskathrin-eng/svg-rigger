@@ -1,6 +1,7 @@
 {
   "title": "Rocky rigging proof of concept",
-  "description": "Body, head and left arm cut from the supplied Inkscape masks. Initial transforms reproduce the supplied pose; the left arm uses a restrained loop animation.",
+  "description": "Body, head and left arm cut from the supplied Inkscape masks. Initial transforms reproduce the supplied pose; head and left arm use restrained loop animations.",
+  "viewbox_padding": 20,
   "parts": [
     {
       "id": "left_arm",
@@ -24,7 +25,17 @@
     {
       "id": "head",
       "file": "work/parts/head.svg",
-      "transform": "rotate(0.01718731 658.19661 476.14514)"
+      "transform": "rotate(0.01718731 658.19661 476.14514)",
+      "animation": {
+        "type": "rotate",
+        "pivot": [658.19661, 476.14514],
+        "values": [-1.5, 1.5, -1.5],
+        "duration": "3.2s",
+        "repeat": "indefinite",
+        "key_times": [0, 0.5, 1],
+        "calc_mode": "spline",
+        "key_splines": ["0.42 0 0.58 1", "0.42 0 0.58 1"]
+      }
     }
   ]
 }
