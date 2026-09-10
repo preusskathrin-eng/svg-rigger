@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "svg-rigger"
+version = "0.1.0"
+description = "Mask-based SVG part cutting and lightweight animation assembly"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "MIT"
+authors = [{name = "Kathrin Preuss"}]
+dependencies = [
+  "shapely==2.1.2",
+  "svgelements==1.9.6",
+  "vtracer==1.0.0a4",
+]
+
+[project.optional-dependencies]
+background = [
+  "Pillow==12.3.0",
+  "onnxruntime==1.29.0",
+  "rembg[cpu]==2.0.83",
+]
+test = []
+
+[project.scripts]
+svg-rigger-remove-background = "svg_rigger.background:main"
+svg-rigger-vectorize = "svg_rigger.vectorize:main"
+svg-rigger-cut = "svg_rigger.cut:main"
+svg-rigger-build = "svg_rigger.rig:main"
+svg-rigger-inspect = "svg_rigger.inspect:main"
+
+[tool.setuptools.packages.find]
+include = ["svg_rigger*"]
+

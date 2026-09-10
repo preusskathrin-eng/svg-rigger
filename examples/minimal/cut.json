@@ -1,0 +1,16 @@
+{
+  "source_svg": "source.svg",
+  "sample_step": 0.25,
+  "precision": 2,
+  "parts": [
+    {
+      "id": "body",
+      "mask_svg": "masks/body.svg",
+      "subtract": ["arm"]
+    },
+    {
+      "id": "arm",
+      "mask_svg": "masks/arm.svg"
+    }
+  ]
+}

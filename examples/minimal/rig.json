@@ -1,0 +1,21 @@
+{
+  "title": "Minimal SVG Rigger example",
+  "description": "Two parts cut with masks; the arm rotates around its joint.",
+  "parts": [
+    {
+      "id": "body",
+      "file": "work/parts/body.svg"
+    },
+    {
+      "id": "arm",
+      "file": "work/parts/arm.svg",
+      "animation": {
+        "type": "rotate",
+        "pivot": [55, 45],
+        "values": [-12, 18, -12],
+        "duration": "1.4s",
+        "repeat": "indefinite"
+      }
+    }
+  ]
+}

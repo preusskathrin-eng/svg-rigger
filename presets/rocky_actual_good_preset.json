@@ -1,0 +1,15 @@
+{
+  "name": "rocky_actual_good_preset",
+  "source": "VTracer app screenshot supplied 2026-09-10",
+  "vtracer": {
+    "clustering": "watershed",
+    "watershed_detail": 255,
+    "hierarchical": "cutout",
+    "filter_speckle": 6,
+    "mode": "spline",
+    "simplify": 2.5,
+    "path_precision": 0,
+    "max_colors": 60,
+    "palette": null
+  }
+}
