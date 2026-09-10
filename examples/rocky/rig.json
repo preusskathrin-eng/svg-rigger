@@ -11,7 +11,7 @@
         "type": "rotate",
         "pivot": [859.58197, 617.32087],
         "values": [-5, 8, -5],
-        "duration": "1.8s",
+        "duration": "1.6s",
         "repeat": "indefinite",
         "key_times": [0, 0.5, 1],
         "calc_mode": "spline",

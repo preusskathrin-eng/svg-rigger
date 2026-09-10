@@ -244,12 +244,18 @@ subtrahiert. Der Arm liegt entsprechend der gelieferten Inkscape-Z-Order hinter
 dem Körper. Seine Ausgangsrotation und sein Drehpunkt wurden aus der
 Teilegruppe übernommen.
 
-<img src="examples/rocky/output/rocky_animated_preview.png" width="420" alt="Aus Masken geschnittener Rocky mit separat animierbarem Kopf und linkem Arm">
+<img src="examples/rocky/output/rocky_animated_preview.gif" width="420" alt="Rocky bewegt Kopf und linken Arm">
+
+Die GIF-Vorschau zeigt die Bewegung direkt auf GitHub. Das zusätzliche Format
+ist erforderlich, weil GitHub SVG-Dateien zwar darstellt, darin enthaltene
+[Animationen aber nicht ausführt](https://docs.github.com/en/repositories/working-with-files/using-files/working-with-non-code-files#viewing-images).
+Die PNG-Vorschau bleibt als statisches Vergleichsbild erhalten.
 
 Das versionierte [animierte SVG](examples/rocky/output/rocky_animated.svg)
 enthält 372 Pfade, 51 Füllwerte, drei Teilegruppen und zwei SMIL-Animationen.
-Der linke Arm rotiert zwischen −5° und 8°, der Kopf langsamer zwischen −1,5°
-und 1,5°. Für die Kopfbewegung wurde die ViewBox mit 20 Einheiten Rand von
+Der linke Arm rotiert in 1,6 Sekunden zwischen −5° und 8°, der Kopf in 3,2
+Sekunden zwischen −1,5° und 1,5°. Die synchronisierten Laufzeiten ergeben eine
+nahtlose 3,2-Sekunden-Vorschau. Für die Kopfbewegung wurde die ViewBox mit 20 Einheiten Rand von
 `0 0 1254 1254` auf `-20 -20 1294 1294` erweitert. Zwei in Edge gerenderte
 Extrempositionen zeigen weder abgeschnittene Haarspitzen noch abgeschnittene
 Armflächen.

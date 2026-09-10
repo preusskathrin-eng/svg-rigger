@@ -145,14 +145,22 @@ gelieferten Inkscape-Z-Order.
 SHA-256:
 
 - animiertes SVG:
-  `E8B1977726427124A65C00AE551957D5429BC3A4F68CA2D59BE7454B95CF520E`
+  `CDFE18616502B1DFD030C33466A9A91F2905F327D520E9F0A0C3DE4D62168047`
 - Vorschau-PNG:
   `9B18599D1C3040B1951FB47CDF2908B5895FA362778AC2DDBF0A78E8BA8F094D`
+- animierte GitHub-Vorschau (GIF):
+  `6C5894FD721357F5E202B22AFFEB0EDD6E91531559506EC6A9724302E1E688FE`
 
 Zwei Headless-Edge-Frames bei 100 ms und 1.600 ms unterschieden sich in 127.308
 Pixeln. Die Differenz-Bounding-Box `(279, 24)–(1091, 744)` umfasst die erwarteten
 Kopf- und Armbereiche. Beide gerenderten Positionen bleiben vollständig in der
 erweiterten ViewBox sichtbar; der Körper bleibt statisch.
+
+Die GitHub-Vorschau besteht aus 20 in Edge gerenderten Frames bei 480 × 480
+Pixeln, 160 ms pro Frame und 3,2 Sekunden Schleifendauer. Sie enthält 20
+unterschiedliche Frames und ist 1.045.434 Bytes groß. Kopf- und Armlaufzeit
+wurden auf 3,2 beziehungsweise 1,6 Sekunden synchronisiert, damit der GIF-Loop
+ohne Zeitsprung wieder am Anfang anschließt.
 
 ## Noch nicht validiert
 
