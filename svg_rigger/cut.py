@@ -10,6 +10,7 @@ from .geometry import (
     SVG_NS,
     geometry_to_d,
     load_mask,
+    load_mask_element,
     load_path_records,
     repair,
     svg_canvas_attributes,
@@ -72,7 +73,9 @@ def cut_parts(manifest_path, output_dir):
     output_dir.mkdir(parents=True, exist_ok=True)
 
     source_root, source_records, source_skipped = load_path_records(
-        source_path, sample_step
+        source_path,
+        sample_step,
+        element_id=manifest.get("source_group"),
     )
     if not source_records:
         raise ValueError(f"source SVG contains no usable paths: {source_path}")
@@ -80,14 +83,30 @@ def cut_parts(manifest_path, output_dir):
     masks = {}
     mask_reports = {}
     for part in manifest["parts"]:
-        mask_path = resolve(base, part["mask_svg"])
-        masks[part["id"]], mask_reports[part["id"]] = load_mask(
-            mask_path, sample_step
-        )
+        if "mask_svg" in part and "mask_clip_id" in part:
+            raise ValueError(
+                f"part {part['id']!r} must use either mask_svg or mask_clip_id"
+            )
+        if "mask_clip_id" in part:
+            masks[part["id"]], mask_reports[part["id"]] = load_mask_element(
+                source_path,
+                part["mask_clip_id"],
+                sample_step,
+            )
+        elif "mask_svg" in part:
+            mask_path = resolve(base, part["mask_svg"])
+            masks[part["id"]], mask_reports[part["id"]] = load_mask(
+                mask_path, sample_step
+            )
+        else:
+            raise ValueError(
+                f"part {part['id']!r} needs mask_svg or mask_clip_id"
+            )
 
     canvas = svg_canvas_attributes(source_root)
     report = {
         "source_svg": str(source_path),
+        "source_group": manifest.get("source_group"),
         "source_paths": len(source_records),
         "source_paths_skipped": source_skipped,
         "sample_step": sample_step,

@@ -17,9 +17,11 @@ sind hier kein Bestandteil des Kernablaufs.
 ## Status
 
 Der technische Grundablauf ist implementiert und mit einem kleinen
-Zwei-Teile-Beispiel getestet. Die eigentliche Rocky-Datei aus dem neuen
-VTracer-App-Lauf und die dazu passend neu gezeichneten Masken fehlen noch. Eine
-produktive Rocky-Animation ist daher noch kein Ergebnis dieses Repositorys.
+Zwei-Teile-Beispiel sowie der realen Rocky-Datei getestet. Das Repository
+enthält Rockys Komplettfigur, die drei Inkscape-Clip-Pfade für Körper, Kopf und
+linken Arm, die Schnittkonfiguration und eine lauffähige Arm-Animation. Die
+Bewegungsparameter sind ein technisch geprüfter Ausgangspunkt, noch keine
+abschließende gestalterische Entscheidung.
 
 VTracer `1.0.0a4` ist eine Vorabversion. Der Pin ist absichtlich exakt, bis ein
 neuer Stand mit Rocky erneut visuell und strukturell geprüft wurde.
@@ -215,6 +217,38 @@ svg-rigger-build examples/minimal/rig.json .validation/minimal-animated.svg
 python -m unittest discover -s tests -p "test_*.py" -v
 ```
 
+## Reales Rocky-Beispiel
+
+Die bereitgestellte Inkscape-Datei enthält vier Gruppen mit jeweils 336
+Quellpfaden: `complete`, `left_arm`, `body` und `head`. Die drei Teilegruppen
+referenzieren ihre Masken als Clip-Pfade. `svg-rigger-cut` liest jetzt sowohl
+die Quellgruppe als auch die Masken direkt aus dieser einen SVG:
+
+```powershell
+svg-rigger-cut examples/rocky/cut.json examples/rocky/work/parts
+svg-rigger-build examples/rocky/rig.json .validation/rocky-rebuild.svg
+```
+
+| Teil | Ausgabepfade | Bézierpfade unverändert | an Maske polygonisiert |
+|---|---:|---:|---:|
+| Körper | 129 | 114 | 15 |
+| Kopf | 204 | 142 | 62 |
+| linker Arm | 39 | 18 | 21 |
+
+Die Maskenunion deckt 99,99 % der sichtbaren Komplettfigur ab. Körper/Kopf und
+Körper/Arm überlappen bewusst an den Gelenken; diese Flächen werden nicht
+subtrahiert. Der Arm liegt entsprechend der gelieferten Inkscape-Z-Order hinter
+dem Körper. Seine Ausgangsrotation und sein Drehpunkt wurden aus der
+Teilegruppe übernommen.
+
+<img src="examples/rocky/output/rocky_animated_preview.png" width="420" alt="Aus Masken geschnittener Rocky mit separat animierbarem linken Arm">
+
+Das versionierte [animierte SVG](examples/rocky/output/rocky_animated.svg)
+enthält 372 Pfade, 51 Füllwerte, drei Teilegruppen und eine SMIL-Animation.
+Zwei in Edge gerenderte Zeitpunkte unterschieden sich ausschließlich im
+Arm-Bereich. Eine zusätzliche Kopfrotation wurde nicht aktiviert, weil bereits
+±1,5° die oberen Haarspitzen außerhalb der vorhandenen ViewBox bewegt.
+
 ## Technische Grenzen
 
 - Boolesche Operationen arbeiten auf abgetasteten Polygonen. An tatsächlichen
@@ -242,6 +276,7 @@ python -m unittest discover -s tests -p "test_*.py" -v
 .
 ├── presets/                         # versionierte VTracer-Einstellungen
 ├── examples/minimal/                 # kleine Schnitt-/Animationsfixture
+├── examples/rocky/                   # reale Inkscape-Datei, Konfiguration, Ergebnis
 ├── svg_rigger/
 │   ├── background.py                 # optionale Vorstufe
 │   ├── vectorize.py                  # VTracer-1-Aufruf

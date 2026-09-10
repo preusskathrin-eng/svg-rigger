@@ -90,15 +90,71 @@ python -m compileall -q svg_rigger tests
 python -m unittest discover -s tests -p "test_*.py" -v
 ```
 
-Drei Tests liefen erfolgreich. Sie prüfen das vollständige Rocky-Preset,
+Fünf Tests liefen erfolgreich. Sie prüfen das vollständige Rocky-Preset,
 Maskenschnitt/Subtraktion, Farberhalt, Kurvenerhalt und die erzeugte
-Rotationsanimation.
+Rotationsanimation. Der reale Rocky-Test prüft zusätzlich Quellhash und die
+erwarteten Pfad-/Kurvenerhaltzahlen aller drei Teile.
+
+## Reale kombinierte Rocky-Datei
+
+Quelle: `examples/rocky/input/rocky_and_his_parts.svg`
+SHA-256: `9B46C0F098DC22BED65E88CBF16AA5BD55FBEAF86090EDE0068236FCB67E2E8E`
+
+Die in das Repository kopierte Datei ist byteidentisch zur bereitgestellten
+lokalen Quelldatei. Die Quelle selbst wurde nicht verändert.
+
+| Element | Inhalt | Clip | Ausgangstransformation |
+|---|---:|---|---|
+| `complete` | 336 Pfade | keiner | keine |
+| `left_arm` | 336 Pfade | `clipPath1011` | `rotate(-2.8823215, 859.58197, 617.32087)` |
+| `body` | 336 Pfade | `clipPath1687` | keine |
+| `head` | 336 Pfade | `clipPath673` | `rotate(0.01718731, 658.19661, 476.14514)` |
+
+Maskenabdeckung auf der Vereinigung der 336 Komplettpfade, bei einer
+Analyse-Schrittweite von 0,75:
+
+| Maske | Schnittfläche mit Motiv |
+|---|---:|
+| Körper | 464.845,91 |
+| Kopf | 254.786,73 |
+| linker Arm | 69.444,52 |
+| Körper/Kopf-Überlappung | 11.009,86 |
+| Körper/Arm-Überlappung | 10.259,63 |
+| Kopf/Arm-Überlappung | 0,00 |
+
+Die Maskenunion deckt 767.807,67 von 767.883,05 Flächeneinheiten ab
+(99,990 %). 75,38 Einheiten liegen außerhalb der Maskenunion; in der
+1254×1254-Edge-Gesamtansicht war daraus kein fehlendes Detail erkennbar.
+
+Schnittergebnisse mit `sample_step=0.5`, `precision=2`:
+
+| Teil | Bytes | Pfade | Füllwerte | unveränderte Kurvenpfade | geschnitten/polygonisiert |
+|---|---:|---:|---:|---:|---:|
+| Körper | 129.725 | 129 | 34 | 114 | 15 |
+| Kopf | 458.422 | 204 | 51 | 142 | 62 |
+| linker Arm | 179.699 | 39 | 21 | 18 | 21 |
+
+Das Ergebnis `examples/rocky/output/rocky_animated.svg` hat 768.967 Bytes,
+372 Pfade, 51 Füllwerte, drei Gruppen und eine Armrotation. Der Kopf wurde nach
+einem Render-Versuch absichtlich statisch gelassen: Eine Bewegung von ±1,5°
+schnitt obere Haarspitzen an der unveränderten ViewBox ab. Der Arm wurde hinter
+dem Körper einsortiert, entsprechend der gelieferten Inkscape-Z-Order.
+
+SHA-256:
+
+- animiertes SVG:
+  `07F3E3564A6FCB78B1C19A72BBF2FB53B263BE14369783A7E325971C6C7397A1`
+- Vorschau-PNG:
+  `EB5F30EE4B9CEA8CE048D202BFCAE38A8770C68EDEE99B395C535E64D88DEA56`
+
+Zwei Headless-Edge-Frames bei 100 ms und 900 ms unterschieden sich in 43.794
+Pixeln. Die Differenz-Bounding-Box `(789, 294)–(1152, 736)` umfasst nur den
+linken Arm; Kopf und Körper blieben unverändert.
 
 ## Noch nicht validiert
 
-- die von der Projektinhaberin direkt aus der VTracer-App gespeicherte SVG;
-- reale Rocky-Masken für Kopf, Körper, Arm und weitere bewegliche Teile;
-- Gelenküberdeckungen, Pivots und Z-Order am realen Motiv;
-- Animation des realen Rocky in mehreren Zielbrowsern;
+- die Animation des realen Rocky außerhalb von Edge;
+- gestalterische Freigabe von Drehpunkt, Amplitude und Geschwindigkeit;
+- weitere bewegliche Teile außer Kopf, Körper und linkem Arm;
 - CSS- oder JavaScript-Ausgabe als Alternative zu SMIL;
 - Gradient-, Filter-, Pattern-, Clip- und komplexe CSS-Eingaben.

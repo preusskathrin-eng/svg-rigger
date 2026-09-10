@@ -99,12 +99,20 @@ def sample_path(path_data, matrix=None, sample_step=0.5, fill_rule="nonzero"):
     return repair(result)
 
 
-def iter_visible_paths(root):
+def iter_visible_paths(root, allow_definition_root=False, default_fill=None):
     ignored_containers = {"defs", "clipPath", "mask", "pattern", "symbol"}
 
-    def walk(element, parent_matrix, inherited_fill, inherited_rule, ignored=False):
+    def walk(
+        element,
+        parent_matrix,
+        inherited_fill,
+        inherited_rule,
+        ignored=False,
+        is_root=False,
+    ):
         name = local_name(element.tag)
-        ignored = ignored or name in ignored_containers
+        if not (is_root and allow_definition_root):
+            ignored = ignored or name in ignored_containers
         style = parse_style(element.get("style"))
         fill = element.get("fill", style.get("fill", inherited_fill))
         fill_rule = element.get(
@@ -115,16 +123,31 @@ def iter_visible_paths(root):
         if name == "path" and not ignored and fill not in (None, "none") and element.get("d"):
             yield element, matrix, fill, fill_rule
         for child in list(element):
-            yield from walk(child, matrix, fill, fill_rule, ignored)
+            yield from walk(child, matrix, fill, fill_rule, ignored, False)
 
-    yield from walk(root, Matrix(), None, "nonzero")
+    yield from walk(root, Matrix(), default_fill, "nonzero", False, True)
 
 
-def load_path_records(path, sample_step=0.5):
+def load_path_records(
+    path,
+    sample_step=0.5,
+    element_id=None,
+    allow_definition_root=False,
+    default_fill=None,
+):
     root = ET.parse(path).getroot()
+    selected = root
+    if element_id is not None:
+        selected = next((item for item in root.iter() if item.get("id") == element_id), None)
+        if selected is None:
+            raise ValueError(f"SVG element not found: {element_id!r} in {path}")
     records = []
     skipped = 0
-    for element, matrix, fill, fill_rule in iter_visible_paths(root):
+    for element, matrix, fill, fill_rule in iter_visible_paths(
+        selected,
+        allow_definition_root=allow_definition_root,
+        default_fill=default_fill,
+    ):
         geometry = sample_path(element.get("d"), matrix, sample_step, fill_rule)
         if geometry is None:
             skipped += 1
@@ -151,6 +174,24 @@ def load_mask(path, sample_step=0.5):
     if geometry is None:
         raise ValueError(f"mask geometry is empty after repair: {path}")
     return geometry, {"paths": len(records), "skipped": skipped}
+
+
+def load_mask_element(path, element_id, sample_step=0.5):
+    _, records, skipped = load_path_records(
+        path,
+        sample_step,
+        element_id=element_id,
+        allow_definition_root=True,
+        default_fill="#000000",
+    )
+    if not records:
+        raise ValueError(
+            f"mask element contains no usable closed filled paths: {element_id!r}"
+        )
+    geometry = repair(unary_union([record["geometry"] for record in records]))
+    if geometry is None:
+        raise ValueError(f"mask element is empty after repair: {element_id!r}")
+    return geometry, {"element_id": element_id, "paths": len(records), "skipped": skipped}
 
 
 def fmt(value, precision):

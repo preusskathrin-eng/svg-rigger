@@ -1,3 +1,4 @@
+import hashlib
 import json
 import tempfile
 import unittest
@@ -85,6 +86,70 @@ class PipelineTests(unittest.TestCase):
             self.assertEqual(
                 animations[0].get("values"), "-10 55 45;20 55 45;-10 55 45"
             )
+
+    def test_reads_source_group_and_clip_paths_from_one_inkscape_svg(self):
+        combined_svg = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 10">
+  <defs>
+    <clipPath id="leftClip"><path d="M0 0H10V10H0Z"/></clipPath>
+    <clipPath id="rightClip"><path d="M10 0H20V10H10Z"/></clipPath>
+  </defs>
+  <g id="complete">
+    <path d="M0 0H20V10H0Z" fill="#123456"/>
+  </g>
+  <g id="left" clip-path="url(#leftClip)">
+    <path d="M0 0H20V10H0Z" fill="#123456"/>
+  </g>
+</svg>"""
+        with tempfile.TemporaryDirectory() as directory:
+            directory = Path(directory)
+            source = directory / "combined.svg"
+            source.write_text(combined_svg, encoding="utf-8")
+            manifest = {
+                "source_svg": "combined.svg",
+                "source_group": "complete",
+                "sample_step": 1,
+                "precision": 1,
+                "parts": [
+                    {"id": "left", "mask_clip_id": "leftClip"},
+                    {"id": "right", "mask_clip_id": "rightClip"},
+                ],
+            }
+            manifest_path = directory / "cut.json"
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            output = directory / "parts"
+            report = cut_parts(manifest_path, output)
+            self.assertEqual(report["source_group"], "complete")
+            self.assertEqual(report["source_paths"], 1)
+            self.assertEqual(len(elements(output / "left.svg", "path")), 1)
+            self.assertEqual(len(elements(output / "right.svg", "path")), 1)
+
+    def test_real_rocky_fixture_keeps_expected_part_structure(self):
+        source = ROOT / "examples" / "rocky" / "input" / "rocky_and_his_parts.svg"
+        self.assertEqual(
+            hashlib.sha256(source.read_bytes()).hexdigest(),
+            "9b46c0f098dc22bed65e88cbf16aa5bd55fbeaf86090ede0068236fcb67e2e8e",
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            report = cut_parts(
+                ROOT / "examples" / "rocky" / "cut.json",
+                Path(directory) / "parts",
+            )
+        actual = {
+            item["id"]: (
+                item["output_paths"],
+                item["curves_preserved_unchanged"],
+                item["paths_clipped_and_polygonized"],
+            )
+            for item in report["parts"]
+        }
+        self.assertEqual(
+            actual,
+            {
+                "body": (129, 114, 15),
+                "head": (204, 142, 62),
+                "left_arm": (39, 18, 21),
+            },
+        )
 
 
 if __name__ == "__main__":
